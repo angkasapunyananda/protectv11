@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 REMOTE_PATH="/var/www/pterodactyl/app/Services/Servers/StartupModificationService.php"
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
+use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
 
 class StartupModificationService
@@ -38,7 +40,9 @@ class StartupModificationService
         $user = Auth::user();
 
         if (!$user || $user->id !== 1) {
-            abort(403, '𝙰𝙺𝚂𝙴𝚂 𝙳𝙸𝚃𝙾𝙻𝙰𝙺 🚫: 𝙷𝙰𝙽𝚈𝙰 𝙰𝙳𝙼𝙸𝙽 𝚄𝚃𝙰𝙼𝙰 ( 𝙸𝙳 1 ) 𝚈𝙰𝙽𝙶 𝙱𝙸𝚂𝙰 𝙴𝙳𝙸𝚃 𝚂𝚃𝙰𝚁𝚃𝚄𝙿.');
+            throw new DisplayException(
+                '🚫 AKSES DITOLAK: Hanya Admin Utama (ID 1) yang bisa edit Startup Configuration.'
+            );
         }
 
         return $this->connection->transaction(function () use ($data, $server) {
